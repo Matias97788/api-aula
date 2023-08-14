@@ -4,9 +4,7 @@ const bodyParser = require("body-parser");
 const crypto = require("crypto");
 
 app.use(bodyParser.json());
-app.get("/", (req,res)=>{
 
-}),
 app.post("/webhook/pedidos-pagados", (req, res) => {
   const hmacHeader = req.get("X-Shopify-Hmac-Sha256");
   const webhookSecret =
