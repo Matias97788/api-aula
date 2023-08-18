@@ -5,6 +5,10 @@ const crypto = require("crypto");
 
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => {
+  res.send("¡Hola desde la API!");
+  
+});
 app.post("/webhook/pedidos-pagados", (req, res) => {
   const hmacHeader = req.get("X-Shopify-Hmac-Sha256");
   const webhookSecret =
@@ -31,7 +35,7 @@ app.post("/webhook/pedidos-pagados", (req, res) => {
   }
 });
 
-const port = 3000;
+const port = 80;
 app.listen(port, () => {
   console.log(`Servidor Express escuchando en el puerto ${port}`);
 });
