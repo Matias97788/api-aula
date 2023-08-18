@@ -35,7 +35,8 @@ app.post("/webhook/pedidos-pagados", (req, res) => {
   }
 });
 
-const port = 80;
+const port = process.env.PORT || 80;
+
 app.listen(port, () => {
   console.log(`Servidor Express escuchando en el puerto ${port}`);
 });
