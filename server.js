@@ -10,28 +10,27 @@ app.get("/", (req, res) => {
 });
 
 app.post("/webhook/pedidos-pagados", async (req, res) => {
-  const payload = req.body;
+  try {
+    const payload = req.body;
 
-  // Obtener los datos del pedido
-  const orderId = payload.id;
-  const orderNumber = payload.order_number;
-  const customerName = payload.customer?.first_name + " " + payload.customer?.last_name;
-  const customerEmail = payload.email;
-  const totalPrice = payload.total_price;
+    // Obtener los datos del pedido
+    const orderId = payload.id;
+    const orderNumber = payload.order_number;
+    const customerName = payload.customer?.first_name + " " + payload.customer?.last_name;
+    const customerEmail = payload.email;
+    const totalPrice = payload.total_price;
 
-
-     // Realizar acciones con los datos del pedido y la validación de Thinkific
+    // Realizar acciones con los datos del pedido y la validación de Thinkific
     console.log("Pedido pagado recibido:");
     console.log("ID del pedido:", orderId);
     console.log("Número de pedido:", orderNumber);
     console.log("Nombre del cliente:", customerName);
     console.log("Email del cliente:", customerEmail);
     console.log("Precio total:", totalPrice);
-  
-  // Validar si el correo electrónico existe en Thinkific
 
- const thinkificApiUrl = `https://api.thinkific.com/api/public/v1/users?query%5Bemail%5D=${customerEmail}`;
-  
+    // Validar si el correo electrónico existe en Thinkific
+    const thinkificApiUrl = `https://api.thinkific.com/api/public/v1/users?query%5Bemail%5D=${customerEmail}`;
+
     const response = await axios.get(thinkificApiUrl, {
       headers: {
         'X-Auth-API-Key': 'e8c27c5301d4a56d02f5021893243581',
@@ -39,12 +38,14 @@ app.post("/webhook/pedidos-pagados", async (req, res) => {
         'Content-Type': 'application/json'
       },
     });
-   if(response.data.items > 0){
-     console.log("El cliente TIENE una cuenta en Thinkific.");
+
+    if (response.data.items > 0) {
+      console.log("El cliente TIENE una cuenta en Thinkific.");
       console.log(response.data.items);
-   }else{
+    } else {
       console.log("El cliente NO TIENE una cuenta en Thinkific.");
-          // Agregar alumno a Thinkific
+
+      // Agregar alumno a Thinkific
       const createStudentUrl = 'https://api.thinkific.com/api/public/v1/users';
 
       const studentData = {
@@ -63,14 +64,14 @@ app.post("/webhook/pedidos-pagados", async (req, res) => {
       });
 
       console.log("Alumno agregado exitosamente:", createResponse.data);
-    
-
-   }
-       
+    }
 
     // Responder al webhook con un código 200 para confirmar la recepción
     res.sendStatus(200);
-
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.sendStatus(500);
+  }
 });
 
 const port = process.env.PORT || 3000;
